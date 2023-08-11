@@ -16,6 +16,9 @@
 		"cloudinary",
 		"openai"
 	],
+	 "engines": {
+      "node": ">=14.20.1"
+    },
   "author": "yasin_a7md",
   "license": "ISC",
   "dependencies": {
