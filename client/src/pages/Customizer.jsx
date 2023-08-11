@@ -48,33 +48,34 @@ const Customizer = () => {
   }
 
   const handleSubmit = async (type) => {
-    if (!prompt) return alert("Please enter a prompt");
-      else return alert("AI mock up maker is a work in progress");
-  //   try {
-  //     setGeneratingImg(true);
+    if (!prompt) return alert("Please enter a prompt")
+    try {
+      //call backend to generate an ai image
+      setGeneratingImg(true)
+      const response = await fetch('http://localhost:8080/api/v1/dalle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          prompt,
+        })
+      });
 
-  //     const response = await fetch('http://localhost:8080/api/v1/dalle', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify({
-  //         prompt,
-  //       })
-  //     });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
-  //     const data = await response.json();
-  //     handleDecals(type, `data:image/png;base64,${data.photo}`);
-  //   } catch (error) {
-  //     alert("Something went wrong while generating the image");
-  //     console.error(error);
-  //   } finally {
-  //     setGeneratingImg(false);
-  //     setActiveEditorTab("");
-  //   }
-  };
+      const data = await response.json();
+      handleDecals(type, `data:image/png;base64,${data.photo}`)
 
-
+    } catch (error) {
+      alert(error)
+    } finally {
+      setGeneratingImg(false) //reset logo
+      setActiveEditorTab('')
+    }
+  }
 
   const handleDecals = (type, result) => {
     const decalType = DecalTypes[type];
@@ -85,7 +86,32 @@ const Customizer = () => {
       handleActiveFilterTab(decalType.filterTab)
     }
   }
-
+  
+  const toggleEditorTab = tabName => {
+		switch (tabName) {
+			case 'colorpicker':
+				if (activeEditorTab === tabName) {
+					setActiveEditorTab('');
+				} else {
+					setActiveEditorTab(tabName);
+				}
+				break;
+			case 'filepicker':
+				if (activeEditorTab === tabName) {
+					setActiveEditorTab('');
+				} else {
+					setActiveEditorTab(tabName);
+				}
+				break;
+			case 'aipicker':
+				if (activeEditorTab === tabName) {
+					setActiveEditorTab('');
+				} else {
+					setActiveEditorTab(tabName);
+				}
+				break;
+		}
+	};
   const handleActiveFilterTab = (tabName) => {
     switch (tabName) {
       case "logoShirt":
@@ -100,6 +126,7 @@ const Customizer = () => {
         break;
     }
 
+    
     // after setting the state, activeFilterTab is updated
 
     setActiveFilterTab((prevState) => {
@@ -129,15 +156,10 @@ const Customizer = () => {
           >
             <div className="flex items-center min-h-screen">
               <div className="editortabs-container tabs">
-                {EditorTabs.map((tab) => (
-                  <Tab
-                    key={tab.name}
-                    tab={tab}
-                    handleClick={() => setActiveEditorTab(tab.name)}
-                  />
-                ))}
-
-                {generateTabContent()}
+              {EditorTabs.map(tab => (
+									<Tab key={tab.name} tab={tab} handleClick={() => toggleEditorTab(tab.name)} />
+								))}
+								{generateTabContent(activeEditorTab)}
               </div>
             </div>
           </motion.div>

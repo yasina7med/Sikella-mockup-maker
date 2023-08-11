@@ -6,7 +6,7 @@ const AIPicker = ({ prompt, setPrompt, generatingImg, handleSubmit }) => {
   return (
     <div className="aipicker-container">
       <textarea 
-        placeholder="!!WORK IN PROGRESS!!"
+        placeholder="Describe the desired image/pattern here.."
         rows={5}
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
